@@ -6,12 +6,17 @@
     <title>Al Midmar</title>
     <!-- Website Icon (Favicon) generated from provided SVG -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg id='Layer_2' data-name='Layer 2' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 139.17 93.42'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23fff;%7D.cls-1,.cls-2%7Bstroke-width:0px;%7D.cls-2%7Bfill:%23c4161c;%7D%3C/style%3E%3C/defs%3E%3Cg id='Layer_1-2' data-name='Layer 1'%3E%3Cg%3E%3Cpolygon class='cls-2' points='74.04 13.14 32.03 0 130.89 0 .35 75.86 74.04 13.14'/%3E%3Cpolygon class='cls-2' points='138.85 8.78 139.17 66.04 116.35 41.75 8.31 84.64 138.85 8.78'/%3E%3Cg%3E%3Cpolygon class='cls-1' points='62.51 18.42 67.04 14.57 48.54 8.78 31.67 8.78 62.51 18.42'/%3E%3Cpolygon class='cls-1' points='16.98 70.19 0 84.64 130.54 8.78 122.65 8.78 16.98 70.19'/%3E%3C/g%3E%3Cpath class='cls-1' d='M136.66,68.41l-21.21-22.58-80.73,32.05-26.75,15.54,108.04-42.89,22.82,24.3-.03-5.35c-.8-.09-1.56-.45-2.13-1.07Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         /* --- Custom Styles & Animations --- */
         body {
-            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="black" stroke="white" stroke-width="1.5"><path d="M12 19l7-7 3 3-7 7-3-3zM18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>'), auto;
         }
         
@@ -47,15 +52,6 @@
             animation: slide-down 0.8s ease-out forwards;
         }
 
-        /* Bounce Animation */
-        @keyframes bounce {
-            0%, 100% { transform: translateY(-25%); animation-timing-function: cubic-bezier(0.8,0,1,1); }
-            50% { transform: none; animation-timing-function: cubic-bezier(0,0,0.2,1); }
-        }
-        .animate-bounce {
-            animation: bounce 1s infinite;
-        }
-
         /* Hamburger Animation */
         .hamburger-line {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -79,6 +75,30 @@
         /* Utility for Parallax */
         .parallax-element {
             will-change: transform;
+        }
+
+        /* Mobile specific styling for Parallax down effect */
+        @media (max-width: 768px) {
+            #services-list .group .absolute.bg-red-600 {
+                transform: translateY(-100%) !important;
+                transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            #services-list .group.mobile-active .absolute.bg-red-600 {
+                transform: translateY(0) !important;
+            }
+            #services-list .group.mobile-active h3,
+            #services-list .group.mobile-active p {
+                color: #ffffff !important;
+                transition: color 0.4s ease;
+            }
+            #services-list .group.mobile-active span.text-red-600 {
+                color: rgba(255, 255, 255, 0.8) !important;
+                transition: color 0.4s ease;
+            }
+            #services-list .group.mobile-active .flex.items-baseline {
+                transform: translateX(1rem) !important;
+                transition: transform 0.5s ease;
+            }
         }
     </style>
 </head>
@@ -277,12 +297,6 @@
                 <p class="max-w-xl text-lg md:text-2xl font-medium text-gray-800 leading-tight">
                     Al Midmar transforms brands into physical reality. We specialize in precision signage, large-scale printing, and immersive exhibition spaces.
                 </p>
-                
-                <div class="flex gap-4">
-                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-300 flex items-center justify-center animate-bounce">
-                        <i data-lucide="chevron-down" class="text-red-600 w-6 h-6"></i>
-                    </div>
-                </div>
             </div>
         </div>
         
@@ -799,7 +813,23 @@
 
         renderCarousel(); // Initial render
 
-        // --- 5. Features Section ---
+        // --- 5. Mobile Capabilities Parallax Effect ---
+        const serviceItems = document.querySelectorAll('#services-list .group');
+        const serviceObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (window.innerWidth <= 768) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('mobile-active');
+                    } else {
+                        entry.target.classList.remove('mobile-active');
+                    }
+                }
+            });
+        }, { threshold: 0.6 }); // Triggers when item is 60% in view
+
+        serviceItems.forEach(item => serviceObserver.observe(item));
+
+        // --- 6. Features Section ---
         const features = [
             { id: 0, title: "Precision", desc: "Laser-guided cutting and CNC fabrication accurate to the micron.", icon: 'award', bg: "radial-gradient(circle at center, #DC2626 0%, transparent 70%)", bgSize: "cover" },
             { id: 1, title: "Speed", desc: "24/7 in-house production shifts ensuring the fastest turnaround.", icon: 'clock', bg: "conic-gradient(from 0deg at 50% 50%, #DC2626 0deg, black 360deg)", bgSize: "cover" },
@@ -888,7 +918,7 @@
         // Initialize all icons on load
         lucide.createIcons();
 
-        // --- 6. Dynamic Phone Links ---
+        // --- 7. Dynamic Phone Links ---
         function updatePhoneLinks() {
             const isMobile = window.matchMedia("(max-width: 768px)").matches;
             const phoneLinks = document.querySelectorAll('.phone-link');
